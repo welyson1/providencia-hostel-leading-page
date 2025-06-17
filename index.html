@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hostal Providencia - Seu lugar em Santiago</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=Permanent+Marker&display=swap" rel="stylesheet">
+
+    <style>
+        /* Estilo para a fonte principal */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #121212;
+            color: #E0E0E0;
+            overflow-x: hidden; /* Previne scroll horizontal causado pelos SVGs */
+        }
+
+        section {
+            position: relative; /* Necessário para posicionar o SVG de fundo */
+            overflow: hidden; /* Previne que o SVG ultrapasse os limites da seção */
+        }
+
+        /* Efeito de sobreposição escuro para imagens de fundo */
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 1;
+        }
+
+        /* Garante que o conteúdo do herói fique acima da sobreposição */
+        .hero-content {
+            position: relative;
+            z-index: 2;
+        }
+        
+        /* Estilo para o botão flutuante do WhatsApp */
+        .whatsapp-float {
+            position: fixed;
+            width: 60px;
+            height: 60px;
+            bottom: 40px;
+            right: 40px;
+            background-color: #25d366;
+            color: #FFF;
+            border-radius: 50px;
+            text-align: center;
+            font-size: 30px;
+            box-shadow: 2px 2px 3px #999;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.3s ease;
+        }
+
+        .whatsapp-float:hover {
+            animation: pulse 1.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        /* Prepara os elementos para a animação GSAP */
+        .gsap-fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        /* Estilo para os SVGs de grafite de fundo */
+        .graffiti-svg-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+        .graffiti-text {
+            font-family: 'Permanent Marker', cursive;
+            font-weight: normal;
+            text-transform: uppercase;
+            opacity: 0.2; /* Opacidade ajustada para 20% */
+        }
+    </style>
+</head>
+<body class="bg-black">
+
+    <!-- Botão Flutuante do WhatsApp -->
+    <a href="https://wa.me/56954387326" id="whatsapp-fab" class="whatsapp-float" target="_blank">
+        <i class="fab fa-whatsapp"></i>
+    </a>
+
+    <!-- Cabeçalho -->
+    <header class="bg-black/80 backdrop-blur-sm fixed top-0 left-0 right-0 z-50">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="#" class="text-2xl font-bold text-white"><img src="https://www.hostalprovidencia.com/wp-content/uploads/2021/05/hostal-providencia-logo.png" alt="Logo Hostal Providencia" class="h-12"></a>
+            <nav class="hidden md:flex items-center space-x-6">
+                <a href="#rooms" class="text-gray-300 hover:text-white transition duration-300" data-lang="nav_rooms">Quartos</a>
+                <a href="#services" class="text-gray-300 hover:text-white transition duration-300" data-lang="nav_services">Serviços</a>
+                <a href="#tours" class="text-gray-300 hover:text-white transition duration-300" data-lang="nav_tours">Tours</a>
+                <a href="#location" class="text-gray-300 hover:text-white transition duration-300" data-lang="nav_location">Localização</a>
+                <a href="#gallery" class="text-gray-300 hover:text-white transition duration-300" data-lang="nav_gallery">Galeria</a>
+            </nav>
+            <div class="flex items-center space-x-4">
+                 <select id="language-selector" class="bg-gray-800 text-white border-none rounded-md p-2 cursor-pointer">
+                    <option value="pt">PT</option><option value="en">EN</option><option value="es">ES</option>
+                </select>
+                <button data-booking-button class="bg-amber-500 hover:bg-amber-600 text-white font-bold py-2 px-4 rounded-full transition duration-300 hidden md:block" data-lang="book_now">Reservar Agora</button>
+                <button id="mobile-menu-button" class="md:hidden text-white"><i class="fas fa-bars text-2xl"></i></button>
+            </div>
+        </div>
+        <div id="mobile-menu" class="hidden md:hidden bg-black/90">
+             <a href="#rooms" class="block text-center py-3 text-gray-300 hover:text-white" data-lang="nav_rooms">Quartos</a>
+             <a href="#services" class="block text-center py-3 text-gray-300 hover:text-white" data-lang="nav_services">Serviços</a>
+             <a href="#tours" class="block text-center py-3 text-gray-300 hover:text-white" data-lang="nav_tours">Tours</a>
+             <a href="#location" class="block text-center py-3 text-gray-300 hover:text-white" data-lang="nav_location">Localização</a>
+             <a href="#gallery" class="block text-center py-3 text-gray-300 hover:text-white" data-lang="nav_gallery">Galeria</a>
+             <button data-booking-button class="block w-full text-center py-4 bg-amber-500 text-white font-bold" data-lang="book_now">Reservar Agora</button>
+        </div>
+    </header>
+
+    <!-- Seção Herói -->
+    <section class="hero-section relative h-screen flex items-center justify-center text-center bg-cover bg-center" style="background-image: url('https://www.hostalprovidencia.com/wp-content/uploads/2023/11/gente-hostalprovidencia.jpg');">
+        <div class="hero-content text-white">
+            <h1 class="gsap-fade-in text-5xl md:text-7xl font-black uppercase mb-4" data-lang="hero_title">Seu Ponto de Encontro em Santiago</h1>
+            <p class="gsap-fade-in text-lg md:text-xl mb-8" data-lang="hero_subtitle">Viva uma experiência única, conecte-se com pessoas de todo o mundo.</p>
+            <button data-booking-button class="gsap-fade-in bg-amber-500 hover:bg-amber-600 text-white font-bold py-3 px-8 rounded-full transition duration-300 text-lg uppercase" data-lang="book_now_main">Reserve Sua Estadia</button>
+        </div>
+    </section>
+
+    <!-- Seção de Quartos -->
+    <section id="rooms" class="py-20 bg-gray-900">
+         <div class="graffiti-svg-container">
+            <svg width="100%" height="100%" viewBox="0 0 800 600" preserveAspectRatio="xMidYMid slice">
+                <defs>
+                    <clipPath id="clipPath5"><circle class="clip-circle" cx="150" cy="450" r="0"></circle></clipPath>
+                    <clipPath id="clipPath6"><circle class="clip-circle" cx="600" cy="150" r="0"></circle></clipPath>
+                    <clipPath id="clipPath9"><circle class="clip-circle" cx="400" cy="550" r="0"></circle></clipPath>
+                </defs>
+                <g clip-path="url(#clipPath5)">
+                    <text class="graffiti-text" style="font-size: 14vw;" x="150" y="450" text-anchor="middle" fill="#f44336" data-rotation="-10">Sueña</text>
+                </g>
+                <g clip-path="url(#clipPath6)">
+                    <text class="graffiti-text" style="font-size: 12vw;" x="600" y="150" text-anchor="middle" fill="#ffc107" data-rotation="15">Descansa</text>
+                </g>
+                 <g clip-path="url(#clipPath9)">
+                    <text class="graffiti-text" style="font-size: 9vw;" x="400" y="550" text-anchor="middle" fill="#4a4a4a" data-rotation="5">Alma Libre</text>
+                </g>
+            </svg>
+        </div>
+        <div class="container mx-auto px-6 relative z-10">
+            <h2 class="gsap-fade-in text-4xl font-bold text-center mb-12 text-white" data-lang="rooms_title">Nossas Acomodações</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="gsap-fade-in bg-gray-800/80 backdrop-blur-sm rounded-lg overflow-hidden shadow-lg transform hover:-translate-y-2 transition duration-300"><div class="overflow-hidden"><img src="https://www.hostalprovidencia.com/wp-content/uploads/2025/01/HP-hab-dorm-61-500x361.jpg" alt="Dormitório Compartilhado" class="w-full h-64 object-cover transition duration-500 hover:scale-105"></div><div class="p-6"><h3 class="text-2xl font-bold mb-2 text-white" data-lang="shared_room">Quartos Compartilhados</h3><p class="text-gray-400" data-lang="shared_room_desc">Ideal para viajantes solo que buscam conhecer novas pessoas. Opções de 4, 6 e 8 camas.</p></div></div>
+                <div class="gsap-fade-in bg-gray-800/80 backdrop-blur-sm rounded-lg overflow-hidden shadow-lg transform hover:-translate-y-2 transition duration-300"><div class="overflow-hidden"><img src="https://www.hostalprovidencia.com/wp-content/uploads/2025/01/HP-hab-doble-48-500x361.jpg" alt="Quarto Privado" class="w-full h-64 object-cover transition duration-500 hover:scale-105"></div><div class="p-6"><h3 class="text-2xl font-bold mb-2 text-white" data-lang="private_room">Quartos Privados</h3><p class="text-gray-400" data-lang="private_room_desc">Desfrute de mais privacidade e conforto. Perfeito para casais e famílias.</p></div></div>
+            </div>
+            <div class="gsap-fade-in text-center mt-12"><button data-booking-button class="bg-amber-500 hover:bg-amber-600 text-white font-bold py-3 px-8 rounded-full transition duration-300" data-lang="book_now_rooms">Verificar Disponibilidade</button></div>
+        </div>
+    </section>
+
+    <!-- Seção de Serviços -->
+    <section id="services" class="py-20">
+        <div class="graffiti-svg-container">
+            <svg width="100%" height="100%" viewBox="0 0 800 600" preserveAspectRatio="xMidYMid slice">
+                <defs>
+                    <clipPath id="clipPath1"><circle class="clip-circle" cx="250" cy="250" r="0"></circle></clipPath>
+                    <clipPath id="clipPath2"><circle class="clip-circle" cx="550" cy="450" r="0"></circle></clipPath>
+                    <clipPath id="clipPath10"><circle class="clip-circle" cx="100" cy="50" r="0"></circle></clipPath>
+                </defs>
+                <g clip-path="url(#clipPath1)">
+                    <text class="graffiti-text" style="font-size: 14vw;" x="250" y="250" text-anchor="middle" fill="#f44336" data-rotation="-15">Explora</text>
+                </g>
+                 <g clip-path="url(#clipPath2)">
+                    <text class="graffiti-text" style="font-size: 12vw;" x="550" y="450" text-anchor="middle" fill="#ffc107" data-rotation="10">Conecta</text>
+                </g>
+                <g clip-path="url(#clipPath10)">
+                    <text class="graffiti-text" style="font-size: 8vw;" x="100" y="50" text-anchor="middle" fill="#4a4a4a" data-rotation="-20">Abre tu mente</text>
+                </g>
+            </svg>
+        </div>
+        <div class="container mx-auto px-6 relative z-10">
+            <h2 class="gsap-fade-in text-4xl font-bold text-center mb-12 text-white" data-lang="services_title">Serviços e Comodidades</h2>
+            <div id="services-wrapper" class="relative transition-all duration-500 ease-in-out max-h-[480px] overflow-hidden md:max-h-none md:overflow-visible">
+                <div id="services-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-8 text-center">
+                    <div class="service-card bg-gray-800/80 backdrop-blur-sm p-6 rounded-lg shadow-lg"><i class="fas fa-shield-alt text-amber-500 text-4xl mb-4"></i><h3 class="text-xl font-bold mb-2 text-white" data-lang="service_reception">Recepção 24h</h3><p class="text-gray-400" data-lang="service_reception_desc">Segurança e atenção a qualquer hora.</p></div>
+                    <div class="service-card bg-gray-800/80 backdrop-blur-sm p-6 rounded-lg shadow-lg"><i class="fas fa-wifi text-amber-500 text-4xl mb-4"></i><h3 class="text-xl font-bold mb-2 text-white" data-lang="service_wifi">Wi-Fi Gratuito</h3><p class="text-gray-400" data-lang="service_wifi_desc">Conectado em todo o hostal.</p></div>
+                    <div class="service-card bg-gray-800/80 backdrop-blur-sm p-6 rounded-lg shadow-lg"><i class="fas fa-users text-amber-500 text-4xl mb-4"></i><h3 class="text-xl font-bold mb-2 text-white" data-lang="service_staff">Equipe Multilíngue</h3><p class="text-gray-400" data-lang="service_staff_desc">Suporte em diversos idiomas.</p></div>
+                    <div class="service-card bg-gray-800/80 backdrop-blur-sm p-6 rounded-lg shadow-lg"><i class="fas fa-broom text-amber-500 text-4xl mb-4"></i><h3 class="text-xl font-bold mb-2 text-white" data-lang="service_cleaning">Limpeza Diária</h3><p class="text-gray-400" data-lang="service_cleaning_desc">Ambiente sempre limpo e seguro.</p></div>
+                    <div class="service-card bg-gray-800/80 backdrop-blur-sm p-6 rounded-lg shadow-lg"><i class="fas fa-martini-glass text-amber-500 text-4xl mb-4"></i><h3 class="text-xl font-bold mb-2 text-white" data-lang="service_bar">Bar</h3><p class="text-gray-400" data-lang="service_bar_desc">Aberto das 18h às 23h para socializar.</p></div>
+                    <div class="service-card bg-gray-800/80 backdrop-blur-sm p-6 rounded-lg shadow-lg"><i class="fas fa-utensils text-amber-500 text-4xl mb-4"></i><h3 class="text-xl font-bold mb-2 text-white" data-lang="service_kitchen">Cozinha Equipada</h3><p class="text-gray-400" data-lang="service_kitchen_desc">Prepare suas próprias refeições.</p></div>
+                    <div class="service-card bg-gray-800/80 backdrop-blur-sm p-6 rounded-lg shadow-lg"><i class="fas fa-book-open text-amber-500 text-4xl mb-4"></i><h3 class="text-xl font-bold mb-2 text-white" data-lang="service_books">Troca de Livros</h3><p class="text-gray-400" data-lang="service_books_desc">Deixe um, pegue um, e viaje lendo.</p></div>
+                    <div class="service-card bg-gray-800/80 backdrop-blur-sm p-6 rounded-lg shadow-lg"><i class="fas fa-bed text-amber-500 text-4xl mb-4"></i><h3 class="text-xl font-bold mb-2 text-white" data-lang="service_linen">Roupa de Cama</h3><p class="text-gray-400" data-lang="service_linen_desc">Inclui lençóis, toalha e cobertores.</p></div>
+                    <div class="service-card bg-gray-800/80 backdrop-blur-sm p-6 rounded-lg shadow-lg"><i class="fas fa-print text-amber-500 text-4xl mb-4"></i><h3 class="text-xl font-bold mb-2 text-white" data-lang="service_print">Serviço de Impressão</h3><p class="text-gray-400" data-lang="service_print_desc">Para seus documentos de viagem.</p></div>
+                    <div class="service-card bg-gray-800/80 backdrop-blur-sm p-6 rounded-lg shadow-lg"><i class="fas fa-cookie-bite text-amber-500 text-4xl mb-4"></i><h3 class="text-xl font-bold mb-2 text-white" data-lang="service_vending">Vendomática</h3><p class="text-gray-400" data-lang="service_vending_desc">Snacks e bebidas 24/7.</p></div>
+                </div>
+                <div id="services-gradient" class="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-black to-transparent md:hidden"></div>
+            </div>
+            <div id="see-more-container" class="text-center mt-8 md:hidden"><button id="see-more-button" class="text-amber-500 font-bold" data-lang="see_more">Ver mais...</button></div>
+        </div>
+    </section>
+
+    <!-- Seção de Tours -->
+    <section id="tours" class="py-20 bg-gray-900">
+        <div class="graffiti-svg-container">
+             <svg width="100%" height="100%" viewBox="0 0 800 600" preserveAspectRatio="xMidYMid slice">
+                <defs>
+                    <clipPath id="clipPath3"><circle class="clip-circle" cx="600" cy="150" r="0"></circle></clipPath>
+                    <clipPath id="clipPath4"><circle class="clip-circle" cx="150" cy="450" r="0"></circle></clipPath>
+                    <clipPath id="clipPath11"><circle class="clip-circle" cx="400" cy="300" r="0"></circle></clipPath>
+                </defs>
+                <g clip-path="url(#clipPath3)">
+                    <text class="graffiti-text" style="font-size: 15vw;" x="600" y="150" text-anchor="middle" fill="#ffc107" data-rotation="15">Viaja</text>
+                </g>
+                <g clip-path="url(#clipPath4)">
+                    <text class="graffiti-text" style="font-size: 13vw;" x="150" y="450" text-anchor="middle" fill="#f44336" data-rotation="-10">Disfruta</text>
+                </g>
+                <g clip-path="url(#clipPath11)">
+                    <text class="graffiti-text" style="font-size: 9vw;" x="400" y="300" text-anchor="middle" fill="#4a4a4a" data-rotation="20">Aventura te espera</text>
+                </g>
+            </svg>
+        </div>
+        <div class="container mx-auto px-6 relative z-10">
+            <h2 class="gsap-fade-in text-4xl font-bold text-center mb-12 text-white" data-lang="tours_title">Explore Santiago a Pé</h2>
+            <p class="gsap-fade-in text-center text-lg text-gray-400 mb-12 max-w-3xl mx-auto" data-lang="tours_subtitle">Os melhores bairros e parques estão a poucos passos do nosso hostel. Perca-se na cultura, arte e gastronomia de Santiago.</p>
+            <div id="tours-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div class="tour-card bg-gray-800/80 backdrop-blur-sm rounded-lg overflow-hidden shadow-lg group"><div class="relative"><img src="https://www.hostalprovidencia.com/wp-content/uploads/2022/11/15-1.png" alt="Barrio Bellavista" class="w-full h-80 object-cover"><div class="absolute inset-0 bg-black bg-opacity-40 flex items-end p-4"><h3 class="text-white text-2xl font-black" data-lang="tour_bellavista_title">Barrio Bellavista</h3></div></div><div class="p-6"><div class="flex items-center text-amber-500 mb-2"><i class="fas fa-walking mr-2"></i><span data-lang="tour_bellavista_time">10 minutos caminhando</span></div><p class="text-gray-400 mb-4" data-lang="tour_bellavista_desc">O coração boêmio de Santiago. Murais coloridos, teatros e uma vida noturna vibrante.</p><a href="https://www.google.com/maps/dir/Hostal+Providencia,Santiago,Chile/Barrio+Bellavista,Providencia,Santiago,Chile" target="_blank" class="text-amber-500 font-bold hover:text-amber-400 transition" data-lang="see_route">Ver Rota <i class="fas fa-arrow-right ml-1"></i></a></div></div>
+                <div class="tour-card bg-gray-800/80 backdrop-blur-sm rounded-lg overflow-hidden shadow-lg group"><div class="relative"><img src="https://www.hostalprovidencia.com/wp-content/uploads/2021/05/hostel-providencia-barriolastarria-min-1024x667.jpg" alt="Barrio Lastarria" class="w-full h-80 object-cover"><div class="absolute inset-0 bg-black bg-opacity-40 flex items-end p-4"><h3 class="text-white text-2xl font-black" data-lang="tour_lastarria_title">Barrio Lastarria</h3></div></div><div class="p-6"><div class="flex items-center text-amber-500 mb-2"><i class="fas fa-walking mr-2"></i><span data-lang="tour_lastarria_time">15 minutos caminhando</span></div><p class="text-gray-400 mb-4" data-lang="tour_lastarria_desc">Charme europeu, cinemas de arte, cafés e lojas de design. Um passeio imperdível.</p><a href="https://www.google.com/maps/dir/Hostal+Providencia,Santiago,Chile/Barrio+Lastarria,Santiago,Chile" target="_blank" class="text-amber-500 font-bold hover:text-amber-400 transition" data-lang="see_route">Ver Rota <i class="fas fa-arrow-right ml-1"></i></a></div></div>
+                <div class="tour-card bg-gray-800/80 backdrop-blur-sm rounded-lg overflow-hidden shadow-lg group"><div class="relative"><img src="https://www.hostalprovidencia.com/wp-content/uploads/2021/05/hostel-providencia-barrioitalia-min-1024x667.jpg" alt="Barrio Italia" class="w-full h-80 object-cover"><div class="absolute inset-0 bg-black bg-opacity-40 flex items-end p-4"><h3 class="text-white text-2xl font-black" data-lang="tour_italia_title">Barrio Italia</h3></div></div><div class="p-6"><div class="flex items-center text-amber-500 mb-2"><i class="fas fa-walking mr-2"></i><span data-lang="tour_italia_time">15 minutos caminhando</span></div><p class="text-gray-400 mb-4" data-lang="tour_italia_desc">Um paraíso de antiguidades, design e restaurantes de autor. O bairro mais cool da cidade.</p><a href="https://www.google.com/maps/dir/Hostal+Providencia,Santiago,Chile/Barrio+Italia,Providencia,Santiago,Chile" target="_blank" class="text-amber-500 font-bold hover:text-amber-400 transition" data-lang="see_route">Ver Rota <i class="fas fa-arrow-right ml-1"></i></a></div></div>
+                 <div class="tour-card bg-gray-800/80 backdrop-blur-sm rounded-lg overflow-hidden shadow-lg group"><div class="relative"><img src="https://www.hostalprovidencia.com/wp-content/uploads/2021/05/parqueforestal-min-1024x667.jpg" alt="Parque Forestal" class="w-full h-80 object-cover"><div class="absolute inset-0 bg-black bg-opacity-40 flex items-end p-4"><h3 class="text-white text-2xl font-black" data-lang="tour_forestal_title">Parque Forestal</h3></div></div><div class="p-6"><div class="flex items-center text-amber-500 mb-2"><i class="fas fa-walking mr-2"></i><span data-lang="tour_forestal_time">15 minutos caminhando</span></div><p class="text-gray-400 mb-4" data-lang="tour_forestal_desc">O pulmão verde do centro da cidade. Ideal para um piquenique ou simplesmente relaxar.</p><a href="https://www.google.com/maps/dir/Hostal+Providencia,Santiago,Chile/Parque+Forestal,Santiago,Chile" target="_blank" class="text-amber-500 font-bold hover:text-amber-400 transition" data-lang="see_route">Ver Rota <i class="fas fa-arrow-right ml-1"></i></a></div></div>
+            </div>
+             <div class="gsap-fade-in text-center mt-12"><button data-booking-button class="bg-amber-500 hover:bg-amber-600 text-white font-bold py-3 px-8 rounded-full transition duration-300" data-lang="book_now_tour">Reserve sua Aventura</button></div>
+        </div>
+    </section>
+    
+    <!-- Seção de Localização -->
+    <section id="location" class="py-20">
+        <div class="container mx-auto px-6 relative z-10">
+            <h2 class="gsap-fade-in text-4xl font-bold text-center mb-12 text-white" data-lang="location_title">Localização Privilegiada</h2>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+                <div class="gsap-fade-in rounded-lg overflow-hidden shadow-lg h-96"><iframe width="100%" height="100%" frameborder="0" style="border:0" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3329.58983955677!2d-70.6333833847926!3d-33.43405798077922!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x9662c5a5b5b5b5b5%3A0x6b6b6b6b6b6b6b6b!2sHostal%20Providencia!5e0!3m2!1spt-BR!2sbr!4v1678886400000" allowfullscreen></iframe></div>
+                <div class="gsap-fade-in text-left"><h3 class="text-3xl font-bold mb-4 text-white" data-lang="address_title">Como Chegar</h3><p class="text-gray-400 mb-6" data-lang="address_text">Dr. Ernesto Prado Tagle 85, Providencia, Santiago, Chile.</p><div class="space-y-4"><a href="https://www.google.com/maps/dir/?api=1&destination=Hostal+Providencia,Santiago,Chile" target="_blank" class="flex items-center space-x-3 text-lg text-amber-500 hover:text-amber-400 transition duration-300"><i class="fas fa-plane-departure"></i><span data-lang="from_airport">Do Aeroporto</span></a><a href="https://www.google.com/maps/dir/?api=1&destination=Hostal+Providencia,Santiago,Chile" target="_blank" class="flex items-center space-x-3 text-lg text-amber-500 hover:text-amber-400 transition duration-300"><i class="fas fa-subway"></i><span data-lang="from_metro">Do Metrô (Estação Baquedano)</span></a><a href="https://www.google.com/maps/dir/?api=1&destination=Hostal+Providencia,Santiago,Chile" target="_blank" class="flex items-center space-x-3 text-lg text-amber-500 hover:text-amber-400 transition duration-300"><i class="fas fa-bus"></i><span data-lang="from_bus">Do Terminal de Ônibus</span></a></div></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Seção da Galeria -->
+    <section id="gallery" class="py-20 bg-gray-900">
+         <div class="graffiti-svg-container">
+            <svg width="100%" height="100%" viewBox="0 0 800 600" preserveAspectRatio="xMidYMid slice">
+                <defs>
+                    <clipPath id="clipPath7"><circle class="clip-circle" cx="200" cy="200" r="0"></circle></clipPath>
+                    <clipPath id="clipPath8"><circle class="clip-circle" cx="650" cy="400" r="0"></circle></clipPath>
+                     <clipPath id="clipPath12"><circle class="clip-circle" cx="400" cy="500" r="0"></circle></clipPath>
+                </defs>
+                <g clip-path="url(#clipPath7)">
+                    <text class="graffiti-text" style="font-size: 16vw;" x="200" y="200" text-anchor="middle" fill="#f44336" data-rotation="-5">Vive</text>
+                </g>
+                <g clip-path="url(#clipPath8)">
+                    <text class="graffiti-text" style="font-size: 10vw;" x="650" y="400" text-anchor="middle" fill="#ffc107" data-rotation="20">Recuerda</text>
+                </g>
+                 <g clip-path="url(#clipPath12)">
+                    <text class="graffiti-text" style="font-size: 8vw;" x="400" y="500" text-anchor="middle" fill="#4a4a4a" data-rotation="-15">La vida es un viaje</text>
+                </g>
+            </svg>
+        </div>
+        <div class="container mx-auto px-6 relative z-10">
+            <h2 class="gsap-fade-in text-4xl font-bold text-center mb-12 text-white" data-lang="gallery_title">Nossos Momentos</h2>
+            <div id="gallery-grid" class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div class="gallery-item h-64 rounded-lg overflow-hidden"><img alt="Galeria 1" class="h-full w-full object-cover object-center transition duration-300 hover:scale-105" src="https://www.hostalprovidencia.com/wp-content/uploads/2023/11/gente-hostalprovidencia.jpg"></div>
+                <div class="gallery-item h-64 rounded-lg overflow-hidden"><img alt="Galeria 2" class="h-full w-full object-cover object-center transition duration-300 hover:scale-105" src="https://www.hostalprovidencia.com/wp-content/uploads/2021/05/hostel-providencia-costanera-min-1024x667.jpg"></div>
+                <div class="gallery-item h-64 rounded-lg overflow-hidden"><img alt="Galeria 3" class="h-full w-full object-cover object-center transition duration-300 hover:scale-105" src="https://www.hostalprovidencia.com/wp-content/uploads/2025/02/BANNERS-web_originales-enero_Mesa-de-trabajo-1-copia-3.webp"></div>
+                <div class="gallery-item h-64 rounded-lg overflow-hidden"><img alt="Galeria 4" class="h-full w-full object-cover object-center transition duration-300 hover:scale-105" src="https://www.hostalprovidencia.com/wp-content/uploads/2025/01/HP-comun-entrada-64.jpg"></div>
+                <div class="gallery-item h-64 rounded-lg overflow-hidden col-span-2"><img alt="Galeria 5" class="h-full w-full object-cover object-center transition duration-300 hover:scale-105" src="https://www.hostalprovidencia.com/wp-content/uploads/2023/11/aventuras-hostalprovidencia.jpg"></div>
+                <div class="gallery-item h-64 rounded-lg overflow-hidden"><img alt="Galeria 7" class="h-full w-full object-cover object-center transition duration-300 hover:scale-105" src="https://www.hostalprovidencia.com/wp-content/uploads/2025/01/descarga.jpg"></div>
+                <div class="gallery-item h-64 rounded-lg overflow-hidden"><img alt="Galeria 8" class="h-full w-full object-cover object-center transition duration-300 hover:scale-105" src="https://www.hostalprovidencia.com/wp-content/uploads/2025/01/RICA-RICA.jpg"></div>
+            </div>
+            <div class="gsap-fade-in text-center mt-12">
+                <p class="text-lg text-gray-400 mb-4" data-lang="gallery_cta_text">Gostou? Siga-nos no Instagram para ver mais da nossa vibe!</p>
+                <a href="https://www.instagram.com/hostalprovidencia/" target="_blank" class="bg-gradient-to-r from-purple-500 via-pink-500 to-red-500 text-white font-bold py-3 px-8 rounded-full transition duration-300 hover:opacity-90">
+                    <i class="fab fa-instagram mr-2"></i> <span data-lang="gallery_cta_button">Ver no Instagram</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Rodapé -->
+    <footer class="bg-black pt-12">
+        <div class="container mx-auto px-6 text-center">
+             <div class="mb-8"><a href="https://www.facebook.com/HostelProvidencia/" target="_blank" class="text-gray-400 hover:text-white mx-4 text-2xl transition duration-300"><i class="fab fa-facebook-f"></i></a><a href="https://www.instagram.com/hostalprovidencia/" target="_blank" class="text-gray-400 hover:text-white mx-4 text-2xl transition duration-300"><i class="fab fa-instagram"></i></a><a href="https://www.tripadvisor.cl/Hotel_Review-g294305-d1084281-Reviews-Hostal_Providencia-Santiago_Santiago_Metropolitan_Region.html" target="_blank" class="text-gray-400 hover:text-white mx-4 text-2xl transition duration-300"><i class="fab fa-tripadvisor"></i></a></div>
+            <div class="text-gray-500 mb-8"><p>Dr Ernesto Prado Tagle 85, Providencia, Santiago, Chile.</p><p>Email: <a href="mailto:reservas@hostalprovidencia.com" class="hover:text-amber-500">reservas@hostalprovidencia.com</a></p><p>Whatsapp: +569 5438 7326</p></div>
+            <div class="border-t border-gray-800 py-6"><p class="text-gray-600 text-sm" data-lang="footer_copyright">&copy; 2025 Hostal Providencia. Todos os direitos reservados.</p></div>
+        </div>
+    </footer>
+    
+    <!-- Modal de Reserva -->
+    <div id="booking-modal" class="hidden fixed inset-0 bg-black bg-opacity-75 z-50 flex items-center justify-center p-4">
+        <div class="bg-gray-900 rounded-lg w-full max-w-4xl h-full max-h-[90vh] flex flex-col shadow-2xl">
+            <div class="flex justify-between items-center p-4 border-b border-gray-700">
+                <h3 class="text-white text-xl font-bold" data-lang="booking_modal_title">Faça sua Reserva</h3>
+                <button id="close-modal-button" class="text-white text-2xl">&times;</button>
+            </div>
+            <div class="flex-grow p-1">
+                <iframe src="https://new-booking.frontdeskmaster.com?hostelId=PEyFSZuLlPCbz1aopk2prnYFtpS%2BnF2L" class="w-full h-full border-0"></iframe>
+            </div>
+        </div>
+    </div>
+
+    <!-- GSAP & ScrollTrigger -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Lógica do Menu Mobile, Modal, e Ver Mais...
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenuButton.addEventListener('click', () => mobileMenu.classList.toggle('hidden'));
+
+            const bookingModal = document.getElementById('booking-modal');
+            const closeModalButton = document.getElementById('close-modal-button');
+            const bookingButtons = document.querySelectorAll('[data-booking-button]');
+            const whatsappFab = document.getElementById('whatsapp-fab');
+
+            const openModal = () => { bookingModal.classList.remove('hidden'); whatsappFab.classList.add('hidden'); };
+            const closeModal = () => { bookingModal.classList.add('hidden'); whatsappFab.classList.remove('hidden'); };
+
+            bookingButtons.forEach(button => button.addEventListener('click', (e) => { e.preventDefault(); openModal(); }));
+            closeModalButton.addEventListener('click', closeModal);
+            bookingModal.addEventListener('click', (e) => { if (e.target === bookingModal) closeModal(); });
+
+            const seeMoreButton = document.getElementById('see-more-button');
+            const servicesWrapper = document.getElementById('services-wrapper');
+            const servicesGradient = document.getElementById('services-gradient');
+            if (seeMoreButton) {
+                seeMoreButton.addEventListener('click', function () {
+                    servicesWrapper.classList.remove('max-h-[480px]');
+                    if (servicesGradient) servicesGradient.classList.add('hidden');
+                    seeMoreButton.parentElement.classList.add('hidden');
+                });
+            }
+
+            // --- GSAP Animations ---
+            gsap.registerPlugin(ScrollTrigger);
+
+            gsap.utils.toArray('.gsap-fade-in').forEach(elem => {
+                gsap.fromTo(elem, { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.8, scrollTrigger: { trigger: elem, start: 'top 85%', toggleActions: 'play none none none' } });
+            });
+            
+            const staggerAnimation = (selector, trigger) => {
+                gsap.from(selector, {
+                    scrollTrigger: { trigger: trigger, start: "top 80%", toggleActions: "play none none none" },
+                    opacity: 0, y: 30, stagger: 0.1, duration: 0.5
+                });
+            }
+            staggerAnimation(".service-card", "#services-grid");
+            staggerAnimation(".tour-card", "#tours-grid");
+            staggerAnimation(".gallery-item", "#gallery-grid");
+
+            // Animação de revelação e movimento do grafite
+            gsap.utils.toArray('.clip-circle').forEach(circle => {
+                gsap.to(circle, {
+                    attr: { r: 600 },
+                    scrollTrigger: {
+                        trigger: circle.closest('section'),
+                        start: "top center",
+                        end: "center center",
+                        scrub: 1.5,
+                    }
+                });
+            });
+            
+            gsap.utils.toArray('.graffiti-text').forEach(text => {
+                const initialRotation = parseFloat(text.getAttribute('data-rotation')) || 0;
+                gsap.fromTo(text, 
+                    { rotation: initialRotation - 5, xPercent: -5 }, 
+                    { 
+                        rotation: initialRotation + 5,
+                        xPercent: 5,
+                        ease: "none",
+                        scrollTrigger: {
+                            trigger: text.closest('section'),
+                            start: "top bottom",
+                            end: "bottom top",
+                            scrub: 2,
+                        }
+                    }
+                );
+            });
+
+
+            // Dicionário de traduções
+             const translations = {
+                pt: {
+                    nav_rooms: 'Quartos', nav_services: 'Serviços', nav_tours: 'Tours', nav_location: 'Localização', nav_gallery: 'Galeria', book_now: 'Reservar Agora',
+                    hero_title: 'Seu Ponto de Encontro em Santiago', hero_subtitle: 'Viva uma experiência única, conecte-se com pessoas de todo o mundo.', book_now_main: 'Reserve Sua Estadia',
+                    rooms_title: 'Nossas Acomodações', shared_room: 'Quartos Compartilhados', shared_room_desc: 'Ideal para viajantes solo que buscam conhecer novas pessoas. Opções de 4, 6 e 8 camas.', private_room: 'Quartos Privados', private_room_desc: 'Desfrute de mais privacidade e conforto. Perfeito para casais e famílias.',
+                    services_title: 'Serviços e Comodidades',
+                    service_reception: 'Recepção 24h', service_reception_desc: 'Segurança e atenção a qualquer hora.',
+                    service_wifi: 'Wi-Fi Gratuito', service_wifi_desc: 'Conectado em todo o hostal.',
+                    service_staff: 'Equipe Multilíngue', service_staff_desc: 'Suporte em diversos idiomas.',
+                    service_cleaning: 'Limpeza Diária', service_cleaning_desc: 'Ambiente sempre limpo e seguro.',
+                    service_bar: 'Bar', service_bar_desc: 'Aberto das 18h às 23h para socializar.',
+                    service_kitchen: 'Cozinha Equipada', service_kitchen_desc: 'Prepare suas próprias refeições.',
+                    service_books: 'Troca de Livros', service_books_desc: 'Deixe um, pegue um, e viaje lendo.',
+                    service_linen: 'Roupa de Cama', service_linen_desc: 'Inclui lençóis, toalha e cobertores.',
+                    service_print: 'Serviço de Impressão', service_print_desc: 'Para seus documentos de viagem.',
+                    service_vending: 'Vendomática', service_vending_desc: 'Snacks e bebidas 24/7.',
+                    tours_title: 'Explore Santiago a Pé', tours_subtitle: 'Os melhores bairros e parques estão a poucos passos do nosso hostel. Perca-se na cultura, arte e gastronomia de Santiago.',
+                    tour_bellavista_title: 'Barrio Bellavista', tour_bellavista_time: '10 minutos caminhando', tour_bellavista_desc: 'O coração boêmio de Santiago. Murais coloridos, teatros e uma vida noturna vibrante.',
+                    tour_lastarria_title: 'Barrio Lastarria', tour_lastarria_time: '15 minutos caminhando', tour_lastarria_desc: 'Charme europeu, cinemas de arte, cafés e lojas de design. Um passeio imperdível.',
+                    tour_italia_title: 'Barrio Italia', tour_italia_time: '15 minutos caminhando', tour_italia_desc: 'Um paraíso de antiguidades, design e restaurantes de autor. O bairro mais cool da cidade.',
+                    tour_forestal_title: 'Parque Forestal', tour_forestal_time: '15 minutos caminhando', tour_forestal_desc: 'O pulmão verde do centro da cidade. Ideal para um piquenique ou simplesmente relaxar.',
+                    see_route: 'Ver Rota', see_more: 'Ver mais...', book_now_rooms: 'Verificar Disponibilidade', book_now_tour: 'Reserve sua Aventura',
+                    location_title: 'Localização Privilegiada', address_title: 'Como Chegar', address_text: 'Dr. Ernesto Prado Tagle 85, Providencia, Santiago, Chile.', from_airport: 'Do Aeroporto', from_metro: 'Do Metrô (Estação Baquedano)', from_bus: 'Do Terminal de Ônibus',
+                    gallery_title: 'Nossos Momentos', gallery_cta_text: 'Gostou? Siga-nos no Instagram para ver mais da nossa vibe!', gallery_cta_button: 'Ver no Instagram',
+                    booking_modal_title: 'Faça sua Reserva',
+                    footer_copyright: '&copy; 2025 Hostal Providencia. Todos os direitos reservados.'
+                },
+                en: {
+                    nav_rooms: 'Rooms', nav_services: 'Services', nav_tours: 'Tours', nav_location: 'Location', nav_gallery: 'Gallery', book_now: 'Book Now',
+                    hero_title: 'Your Meeting Point in Santiago', hero_subtitle: 'Live a unique experience, connect with people from all over the world.', book_now_main: 'Book Your Stay',
+                    rooms_title: 'Our Accommodations', shared_room: 'Shared Rooms', shared_room_desc: 'Ideal for solo travelers looking to meet new people. Options for 4, 6, and 8 beds.', private_room: 'Private Rooms', private_room_desc: 'Enjoy more privacy and comfort. Perfect for couples and families.',
+                    services_title: 'Services & Amenities',
+                    service_reception: '24h Reception', service_reception_desc: 'Security and attention at any time.',
+                    service_wifi: 'Free Wi-Fi', service_wifi_desc: 'Connected throughout the hostel.',
+                    service_staff: 'Multilingual Staff', service_staff_desc: 'Support in several languages.',
+                    service_cleaning: 'Daily Cleaning', service_cleaning_desc: 'Always clean and safe environment.',
+                    service_bar: 'Bar', service_bar_desc: 'Open from 6 PM to 11 PM to socialize.',
+                    service_kitchen: 'Equipped Kitchen', service_kitchen_desc: 'Prepare your own meals.',
+                    service_books: 'Book Exchange', service_books_desc: 'Leave one, take one, and travel reading.',
+                    service_linen: 'Bed Linen', service_linen_desc: 'Includes sheets, towel, and blankets.',
+                    service_print: 'Printing Service', service_print_desc: 'For your travel documents.',
+                    service_vending: 'Vending Machine', service_vending_desc: 'Snacks and drinks 24/7.',
+                    tours_title: 'Explore Santiago on Foot', tours_subtitle: 'The best neighborhoods and parks are just a few steps from our hostel. Get lost in the culture, art, and gastronomy of Santiago.',
+                    tour_bellavista_title: 'Bellavista Neighborhood', tour_bellavista_time: '10 minutes walking', tour_bellavista_desc: 'The bohemian heart of Santiago. Colorful murals, theaters, and a vibrant nightlife.',
+                    tour_lastarria_title: 'Lastarria Neighborhood', tour_lastarria_time: '15 minutes walking', tour_lastarria_desc: 'European charm, art cinemas, cafes, and designer shops. A must-see tour.',
+                    tour_italia_title: 'Italia Neighborhood', tour_italia_time: '15 minutes walking', tour_italia_desc: 'A paradise of antiques, design, and author restaurants. The coolest neighborhood in town.',
+                    tour_forestal_title: 'Forestal Park', tour_forestal_time: '15 minutes walking', tour_forestal_desc: 'The green lung of the city center. Ideal for a picnic or just relaxing.',
+                    see_route: 'See Route', see_more: 'See more...', book_now_rooms: 'Check Availability', book_now_tour: 'Book your Adventure',
+                    location_title: 'Privileged Location', address_title: 'How to Get Here', address_text: 'Dr. Ernesto Prado Tagle 85, Providencia, Santiago, Chile.', from_airport: 'From the Airport', from_metro: 'From the Metro (Baquedano Station)', from_bus: 'From the Bus Terminal',
+                    gallery_title: 'Our Moments', gallery_cta_text: 'Liked it? Follow us on Instagram to see more of our vibe!', gallery_cta_button: 'See on Instagram',
+                    booking_modal_title: 'Make Your Reservation',
+                    footer_copyright: '&copy; 2025 Hostal Providencia. All rights reserved.'
+                },
+                es: {
+                    nav_rooms: 'Habitaciones', nav_services: 'Servicios', nav_tours: 'Tours', nav_location: 'Ubicación', nav_gallery: 'Galería', book_now: 'Reserva Ahora',
+                    hero_title: 'Tu Punto de Encuentro en Santiago', hero_subtitle: 'Vive una experiencia única, conéctate con personas de todo el mundo.', book_now_main: 'Reserva Tu Estadía',
+                    rooms_title: 'Nuestros Alojamientos', shared_room: 'Habitaciones Compartidas', shared_room_desc: 'Ideal para viajeros solos que buscan conocer gente nueva. Opciones de 4, 6 y 8 camas.', private_room: 'Habitaciones Privadas', private_room_desc: 'Disfruta de más privacidad y comodidad. Perfecto para parejas y familias.',
+                    services_title: 'Servicios y Comodidades',
+                    service_reception: 'Recepción 24h', service_reception_desc: 'Seguridad y atención a cualquier hora.',
+                    service_wifi: 'Wi-Fi Gratis', service_wifi_desc: 'Conectado en todo el hostal.',
+                    service_staff: 'Personal Multilingüe', service_staff_desc: 'Soporte en varios idiomas.',
+                    service_cleaning: 'Limpieza Diaria', service_cleaning_desc: 'Ambiente siempre limpio y seguro.',
+                    service_bar: 'Bar', service_bar_desc: 'Abierto de 18h a 23h para socializar.',
+                    service_kitchen: 'Cocina Equipada', service_kitchen_desc: 'Prepara tus propias comidas.',
+                    service_books: 'Intercambio de Libros', service_books_desc: 'Deja uno, toma uno, y viaja leyendo.',
+                    service_linen: 'Ropa de Cama', service_linen_desc: 'Incluye sábanas, toalla y mantas.',
+                    service_print: 'Servicio de Impresión', service_print_desc: 'Para tus documentos de viaje.',
+                    service_vending: 'Máquina Expendedora', service_vending_desc: 'Snacks y bebidas 24/7.',
+                    tours_title: 'Explora Santiago a Pie', tours_subtitle: 'Los mejores barrios y parques están a solo unos pasos de nuestro hostal. Piérdete en la cultura, el arte y la gastronomía de Santiago.',
+                    tour_bellavista_title: 'Barrio Bellavista', tour_bellavista_time: '10 minutos caminando', tour_bellavista_desc: 'El corazón bohemio de Santiago. Murales coloridos, teatros y una vibrante vida nocturna.',
+                    tour_lastarria_title: 'Barrio Lastarria', tour_lastarria_time: '15 minutos caminando', tour_lastarria_desc: 'Encanto europeo, cines de arte, cafés y tiendas de diseño. Un paseo imperdible.',
+                    tour_italia_title: 'Barrio Italia', tour_italia_time: '15 minutos caminando', tour_italia_desc: 'Un paraíso de antigüedades, diseño y restaurantes de autor. El barrio más cool de la ciudad.',
+                    tour_forestal_title: 'Parque Forestal', tour_forestal_time: '15 minutos caminando', tour_forestal_desc: 'El pulmão verde del centro de la ciudad. Ideal para un picnic o simplemente relajarse.',
+                    see_route: 'Ver Ruta', see_more: 'Ver más...', book_now_rooms: 'Verificar Disponibilidad', book_now_tour: 'Reserva tu Aventura',
+                    location_title: 'Ubicación Privilegiada', address_title: 'Cómo Llegar', address_text: 'Dr. Ernesto Prado Tagle 85, Providencia, Santiago, Chile.', from_airport: 'Desde el Aeropuerto', from_metro: 'Desde el Metro (Estación Baquedano)', from_bus: 'Desde el Terminal de Buses',
+                    gallery_title: 'Nuestros Momentos', gallery_cta_text: '¿Te gustó? ¡Síguenos en Instagram para ver más de nuestra onda!', gallery_cta_button: 'Ver en Instagram',
+                    booking_modal_title: 'Haz tu Reserva',
+                    footer_copyright: '&copy; 2025 Hostal Providencia. Todos los derechos reservados.'
+                }
+            };
+            
+            // Lógica do Seletor de Idioma
+            const languageSelector = document.getElementById('language-selector');
+            function changeLanguage(lang) {
+                document.documentElement.lang = lang;
+                const elements = document.querySelectorAll('[data-lang]');
+                elements.forEach(el => {
+                    const key = el.getAttribute('data-lang');
+                    if (translations[lang] && translations[lang][key]) {
+                        el.innerHTML = translations[lang][key];
+                    }
+                });
+            }
+            languageSelector.addEventListener('change', (event) => changeLanguage(event.target.value));
+            changeLanguage('pt'); // Define o idioma inicial
+        });
+    </script>
+
+</body>
+</html>
